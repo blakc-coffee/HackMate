@@ -4,7 +4,7 @@ import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { sampleData } from "../data/sampleData";
 
-export function HomePage() {
+export function DisplayTeams() {
   const navigate = useNavigate();
   const users = Object.values(sampleData);
   return (
@@ -20,7 +20,7 @@ export function HomePage() {
 
          <div className="type-selector">
               <label className="type-option active">
-                <input type="radio" name="type" value="solo" defaultChecked />
+                <input type="radio" name="type" value="solo" onClick={() => navigate("/")} />
                 <div className="type-content">
                   <span>Solo Attendee</span>
                 </div>
@@ -30,7 +30,7 @@ export function HomePage() {
                   type="radio"
                   name="type"
                   value="team"
-                  onClick={() => navigate("/display-teams")}
+                  defaultChecked
                 />
                 <div className="type-content">
                   <span>Team</span>
