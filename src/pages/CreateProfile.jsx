@@ -1,20 +1,50 @@
 import "./CreateProfile.css";
 import { Link } from "react-router";
-import { CreateNewProfile } from "../components/CreateNewProfile";
-import { addNewProfile } from "../data/sampleData";
+import { setMyProfileId } from "../data/myProfile";
+import { addSoloProfile } from "../data/soloProfiles";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function CreateProfile() {
-  // CREATE STATE FOR ALL FORM FIELDS
+
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [skills, setSkills] = useState([]);
   const [interestedIn, setInterestedIn] = useState("");
   const [discord, setDiscord] = useState("");
   const [linkedinId, setLinkedinId] = useState("");
-
   const navigate = useNavigate();
+
+  const handleCreate = () => {
+  // Simple validation
+  if (!name?.trim()) {
+    alert('Please enter your name');
+    return;
+  }
+  if (!bio?.trim()) {
+    alert('Please enter your bio');
+    return;
+  }
+  if (skills.length === 0) {
+    alert('Please select at least one skill');
+    return;
+  }
+  // Optional field validations
+  if (discord && !discord.includes('#')) {
+    alert('Please enter a valid Discord username (e.g., username#1234)');
+    return;
+  }
+  const newProfileId = addSoloProfile({
+      name, bio, skills, interestedIn, discord, linkedinId
+    });
+    
+    // ✅ Set this profile as your profile
+    setMyProfileId(newProfileId);
+    
+    alert('Profile created! ✅');
+    navigate('/my-profile');
+  };
+
   return (
     <>
       <div className="form-container">
@@ -224,22 +254,7 @@ export function CreateProfile() {
             <Link to="/" className="btn-cancel">
               Cancel
             </Link>
-            <button
-              type="button"
-              onClick={() => {
-                addNewProfile({
-                  name,
-                  bio,
-                  skills,
-                  interestedIn,
-                  discord,
-                  linkedinId,
-                });
-                alert("Profile saved! ✅");
-              }}
-            >
-              Create Profile
-            </button>
+             <button className="btn-cancel" onClick={handleCreate}>Create Profile</button>
           </div>
         </form>
       </div>

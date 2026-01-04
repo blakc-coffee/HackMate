@@ -1,22 +1,33 @@
 const defaultSoloProfiles = {
   "solo-1": {
     id: "solo-1",
-    name: "Alex Chen",
+    name: "Aditya Seetam",
     age: 22,
     type: "solo",
-    bio: "Full-stack dev looking for team",
-    skills: ["React", "Node.js"],
-    interestedIn: "Web Dev",
-    discord: "alex#1234",
-    linkedinId: "alex-chen"
+    bio: "Jobless herbivore",
+    skills: ["AI/ML", "Data Science"],
+    interestedIn: "Jobs",
+    discord: "dark-1410",
+    linkedinId: "Aditya"
   },
   "solo-2": {
     id: "solo-2",
-    name: "Sarah Patel",
+    name: "Nili Thayyil",
+    age: 23,
+    type: "solo",
+    bio: "I'm really tall",
+    skills: ["Python", "Mobile"],
+    interestedIn: "AI/ML",
+    discord: "yougurt",
+    linkedinId: "Nilli-Thayill"
+  },
+  "solo-3": {
+    id: "solo-3",
+    name: "Joahana",
     age: 23,
     type: "solo",
     bio: "ML engineer",
-    skills: ["Python", "TensorFlow"],
+    skills: ["Python", "Backend"],
     interestedIn: "AI/ML",
     discord: "sarah#5678",
     linkedinId: "sarah-patel"

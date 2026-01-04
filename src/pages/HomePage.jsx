@@ -3,10 +3,15 @@ import "../index.css";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAllSoloProfiles } from "../data/soloProfiles";
+import { getMyProfileId } from "../data/myProfile";
 
 export function HomePage() {
+
+  const allUsers = getAllSoloProfiles();
+  const myProfileId = getMyProfileId();
+  const otherUsers = allUsers.filter(user => user.id !== myProfileId);
   const navigate = useNavigate();
-  const users = getAllSoloProfiles();
+  
   return (
     <>
       <div className="HomePage">
@@ -59,7 +64,7 @@ export function HomePage() {
 
 
          
-            {users.map((user) => (
+            {otherUsers.map((user) => (
               <div className="profile-card" key={user.id}>
                 <div className="profile-header">
                   <div className="avatar">{user.name.charAt(0)}</div>
