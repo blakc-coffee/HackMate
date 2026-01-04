@@ -2,11 +2,11 @@ import "./HomePage.css";
 import "../index.css";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { sampleData } from "../data/sampleData";
+import { getAllTeamProfiles } from "../data/teamProfiles";
 
 export function DisplayTeams() {
   const navigate = useNavigate();
-  const users = Object.values(sampleData);
+  const users = getAllTeamProfiles();
   return (
     <>
       <div className="HomePage">
@@ -66,7 +66,7 @@ export function DisplayTeams() {
                   <div className="profile-info">
                     <div className="profile-name">{user.name}</div>
                     <div className="profile-meta">
-                      <span className="badge">👤{user.type}</span>
+                      
                     </div>
                   </div>
                 </div>

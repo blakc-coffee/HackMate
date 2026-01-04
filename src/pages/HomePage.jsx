@@ -2,11 +2,11 @@ import "./HomePage.css";
 import "../index.css";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { sampleData } from "../data/sampleData";
+import { getAllSoloProfiles } from "../data/soloProfiles";
 
 export function HomePage() {
   const navigate = useNavigate();
-  const users = Object.values(sampleData);
+  const users = getAllSoloProfiles();
   return (
     <>
       <div className="HomePage">
@@ -22,7 +22,7 @@ export function HomePage() {
               <label className="type-option active">
                 <input type="radio" name="type" value="solo" defaultChecked />
                 <div className="type-content">
-                  <span>Solo Attendee</span>
+                  <span>Solo Profiles</span>
                 </div>
               </label>
               <label className="type-option">
@@ -33,7 +33,7 @@ export function HomePage() {
                   onClick={() => navigate("/display-teams")}
                 />
                 <div className="type-content">
-                  <span>Team</span>
+                  <span>Team Profiles</span>
                 </div>
               </label>
             </div>
@@ -66,7 +66,6 @@ export function HomePage() {
                   <div className="profile-info">
                     <div className="profile-name">{user.name}</div>
                     <div className="profile-meta">
-                      <span className="badge">👤{user.type}</span>
                     </div>
                   </div>
                 </div>
