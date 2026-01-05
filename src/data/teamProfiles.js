@@ -1,4 +1,4 @@
-
+import { getMyTeamId } from "./myProfile";
 const defaultTeamProfiles = {
   "team-1": {
     id: "team-1",
@@ -58,4 +58,20 @@ export function getAllTeamProfiles() {
 // Get single by ID
 export function getTeamProfileById(id) {
   return teamProfiles[id];
+}
+
+export function updateMyTeamProfile(updatedProfile) {
+  const myTeamId = getMyTeamId(); // ✅ Get your ID
+  teamProfiles[myTeamId] = {
+    ...teamProfiles[myTeamId],
+    ...updatedProfile,
+    id: myTeamId
+  };
+  localStorage.setItem('teamProfiles', JSON.stringify(teamProfiles));
+  return teamProfiles[myTeamId];
+}
+
+export function getMyTeamProfile() {
+  const myTeamId = getMyTeamId();
+  return teamProfiles[myTeamId];
 }

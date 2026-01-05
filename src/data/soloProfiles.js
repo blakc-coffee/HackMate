@@ -1,3 +1,5 @@
+import { getMySoloId } from "./myProfile";
+
 const defaultSoloProfiles = {
   "solo-1": {
     id: "solo-1",
@@ -23,7 +25,7 @@ const defaultSoloProfiles = {
   },
   "solo-3": {
     id: "solo-3",
-    name: "Joahana",
+    name: "Johana",
     age: 23,
     type: "solo",
     bio: "ML engineer",
@@ -58,4 +60,20 @@ export function getAllSoloProfiles() {
 // Get single by ID
 export function getSoloProfileById(id) {
   return soloProfiles[id];
+}
+
+export function updateMySoloProfile(updatedProfile) {
+  const mySoloId = getMySoloId(); // ✅ Get your ID
+  soloProfiles[mySoloId] = {
+    ...soloProfiles[mySoloId],
+    ...updatedProfile,
+    id: mySoloId
+  };
+  localStorage.setItem('soloProfiles', JSON.stringify(soloProfiles));
+  return soloProfiles[mySoloId];
+}
+
+export function getMyProfile() {
+  const mySoloId = getMySoloId();
+  return soloProfiles[mySoloId];
 }

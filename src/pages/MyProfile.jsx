@@ -63,7 +63,7 @@ export function MyProfile() {
                   <h4>Contact</h4>
                   <p>💬 {soloProfile.discord}</p>
                 </div>
-                <Link to="/create-profile" className="btn-edit">
+                <Link to="/edit-solo-profile" className="btn-edit">
                 Edit Solo Profile
               </Link>
               </div>
@@ -72,8 +72,8 @@ export function MyProfile() {
             </div>
           ) : (
             <div className="empty-state">
-              <p>You haven't created a solo profile yet</p>
-              <Link to="/create-profile" className="btn-create">
+              <p>You haven't created a solo profile yet</p><br />
+              <Link to="/create-profile" className="btn-edit">
                 Create Solo Profile
               </Link>
             </div>
@@ -120,17 +120,17 @@ export function MyProfile() {
                   <h4>Contact</h4>
                   <p>💬 {teamProfile.discord}</p>
                 </div>
-                <Link to="/create-team-profile" className="btn-edit">
+                <Link to="/edit-team-profile" className="btn-edit">
                 Edit Team Profile
-              </Link>0.0
+              </Link>
               </div>
 
               
             </div>
           ) : (
             <div className="empty-state">
-              <p>You haven't created a team profile yet</p>
-              <Link to="/create-team-profile" className="btn-create">
+              <p>You haven't created a team profile yet</p><br />
+              <Link to="/create-team-profile" className="btn-edit">
                 Create Team Profile
               </Link>
             </div>
