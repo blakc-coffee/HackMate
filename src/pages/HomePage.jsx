@@ -3,13 +3,13 @@ import "../index.css";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAllSoloProfiles } from "../data/soloProfiles";
-import { getMyProfileId } from "../data/myProfile";
+import { getMySoloId } from "../data/myProfile";
 
 export function HomePage() {
 
   const allUsers = getAllSoloProfiles();
-  const myProfileId = getMyProfileId();
-  const otherUsers = allUsers.filter(user => user.id !== myProfileId);
+  const mySoloId = getMySoloId();
+  const otherUsers = allUsers.filter(user => user.id !== mySoloId);
   const navigate = useNavigate();
   
   return (

@@ -3,10 +3,18 @@ import "../index.css";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAllTeamProfiles } from "../data/teamProfiles";
+import { getMyTeamId } from "../data/myProfile";
 
 export function DisplayTeams() {
   const navigate = useNavigate();
-  const users = getAllTeamProfiles();
+    const allTeams = getAllTeamProfiles();
+  const myTeamId = getMyTeamId(); // ✅ Get your team profile ID
+  
+
+  const teams = allTeams.filter(team => team.id !== myTeamId);
+  
+  
+
   return (
     <>
       <div className="HomePage">
@@ -59,7 +67,7 @@ export function DisplayTeams() {
 
 
          
-            {users.map((user) => (
+            {teams.map((user) => (
               <div className="profile-card" key={user.id}>
                 <div className="profile-header">
                   <div className="avatar">{user.name.charAt(0)}</div>

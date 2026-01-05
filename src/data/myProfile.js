@@ -1,7 +1,7 @@
 const defaultMyProfile = {
   id: "my-profile",
-  myProfileId: null,  // ✅ ADD THIS - stores YOUR profile ID
-  name: "Your Name",
+  mySoloId: null,
+  myTeamProfileId: null, 
   age: 19,
   type: "solo",
   bio: "First-year CSE student",
@@ -15,14 +15,22 @@ export let myProfile = JSON.parse(
   localStorage.getItem('myProfile') || JSON.stringify(defaultMyProfile)
 );
 
-// ✅ NEW: Set your profile ID when you create a solo profile
-export function setMyProfileId(profileId) {
-  myProfile.myProfileId = profileId;
+export function setMySoloId(profileId) {
+  myProfile.mySoloId = profileId;
+  localStorage.setItem('myProfile', JSON.stringify(myProfile));
+}
+export function setMyTeamId(teamId) {
+  myProfile.myTeamId = teamId;
   localStorage.setItem('myProfile', JSON.stringify(myProfile));
 }
 
-export function getMyProfileId() {
-  return myProfile.myProfileId;
+export function getMySoloId() {
+  return myProfile.mySoloId;
+}
+
+
+export function getMyTeamId() {
+  return myProfile.myTeamId;
 }
 
 export function updateMyProfile(profile) {

@@ -1,39 +1,137 @@
+import {  getMySoloId, getMyTeamId } from "../data/myProfile";
+import { getSoloProfileById } from "../data/soloProfiles";
+import { getTeamProfileById } from "../data/teamProfiles";
+import { Link } from "react-router-dom";
+import { useEffect,useState } from "react";
 import "./MyProfile.css";
 
-
 export function MyProfile() {
+
+
+
+  const [soloProfile, setSoloProfile] = useState(null);
+  const [teamProfile, setTeamProfile] = useState(null);
+
+
+  useEffect(() => {
+    const mySoloId = getMySoloId();
+    const myTeamId = getMyTeamId();
+
+    const solo = mySoloId ? getSoloProfileById(mySoloId) : null;
+    const team = myTeamId ? getTeamProfileById(myTeamId) : null;
+
+    setSoloProfile(solo);
+    setTeamProfile(team);
+  }, []);
+
   return (
     <>
       <div className="my-profile-container">
-        <div className="my-profile-header">
-          <h1>My Profiles</h1>
-          <p>Manage your hackathon team profiles</p>
-        </div>
+        <h1>My Profiles</h1>
+        <br />
 
-        <div className="profiles-grid">
-          <div className="profile-card">
-            <div className="profile-header">
-              <div className="avatar">YP</div>
-              <div className="profile-info">
-                <div className="profile-name">Your Profile Name</div>
-                <div className="profile-meta">
-                  <span className="badge">👤 Solo</span>
+        {/* SOLO PROFILE SECTION */}
+        <div className="profile-section">
+          <h2>Solo Profile</h2>
+          {soloProfile ? (
+            <div className="profile-detail-container">
+              <div className="profile-hero">
+                <div className="profile-avatar-large">
+                  {soloProfile.name?.charAt(0)}
+                </div>
+                <h3>{soloProfile.name}</h3>
+                <span className="profile-type-badge">👤 Solo</span>
+              </div>
+
+              <div className="profile-content">
+                <div className="section">
+                  <h4>About</h4>
+                  <p>{soloProfile.bio}</p>
+                </div>
+                <div className="section">
+                  <h4>Skills</h4>
+                  <div className="skills-display">
+                    {soloProfile.skills.map((skill) => (
+                      <span key={skill} className="skill-badge-large">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="section">
+                  <h4>Contact</h4>
+                  <p>💬 {soloProfile.discord}</p>
                 </div>
               </div>
+
+              <Link to="/create-profile" className="btn-edit">
+                Edit Solo Profile
+              </Link>
             </div>
-            <div className="skills-list">
-              <span className="skill-tag">Frontend</span>
-              <span className="skill-tag">React</span>
+          ) : (
+            <div className="empty-state">
+              <p>You haven't created a solo profile yet</p>
+              <Link to="/create-profile" className="btn-create">
+                Create Solo Profile
+              </Link>
             </div>
-            <div className="profile-bio">
-              Your profile description goes here. This is what other
-              participants will see about you.
+          )}
+        </div>
+
+        {/* TEAM PROFILE SECTION */}
+        <div className="profile-section">
+          <h2>Team Profile</h2>
+          {teamProfile ? (
+            <div className="profile-detail-container">
+              <div className="profile-hero">
+                <div className="profile-avatar-large">
+                  {teamProfile.name?.charAt(0)}
+                </div>
+                <h3>{teamProfile.name}</h3>
+                <span className="profile-type-badge">🤝 Team</span>
+              </div>
+
+              <div className="profile-content">
+                <div className="section">
+                  <h4>About</h4>
+                  <p>{teamProfile.bio}</p>
+                </div>
+                <div className="section">
+                  <h4>Team Members</h4>
+                  <ul className="team-members-list">
+                    <li>{teamProfile.member1Name}</li>
+                    <li>{teamProfile.member2Name}</li>
+                    <li>{teamProfile.member3Name}</li>
+                  </ul>
+                </div>
+                <div className="section">
+                  <h4>Skills</h4>
+                  <div className="skills-display">
+                    {teamProfile.skills.map((skill) => (
+                      <span key={skill} className="skill-badge-large">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="section">
+                  <h4>Contact</h4>
+                  <p>💬 {teamProfile.discord}</p>
+                </div>
+              </div>
+
+              <Link to="/create-team-profile" className="btn-edit">
+                Edit Team Profile
+              </Link>
             </div>
-            <div className="profile-card-action">
-              <button className="btn-edit">✏️ Edit</button>
-              <button className="btn-delete">🗑️ Delete</button>
+          ) : (
+            <div className="empty-state">
+              <p>You haven't created a team profile yet</p>
+              <Link to="/create-team-profile" className="btn-create">
+                Create Team Profile
+              </Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

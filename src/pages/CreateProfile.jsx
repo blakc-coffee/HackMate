@@ -1,6 +1,6 @@
 import "./CreateProfile.css";
 import { Link } from "react-router";
-import { setMyProfileId } from "../data/myProfile";
+import { setMySoloId, getMySoloId } from "../data/myProfile";
 import { addSoloProfile } from "../data/soloProfiles";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,13 @@ export function CreateProfile() {
   const navigate = useNavigate();
 
   const handleCreate = () => {
+
+    // ✅ Check if user already has a solo profile
+    const existingSoloId = getMySoloId();
+    if (existingSoloId) {
+      alert(' You can only create ONE solo profile! Edit your existing one.');
+      return;
+    }
   // Simple validation
   if (!name?.trim()) {
     alert('Please enter your name');
@@ -29,17 +36,13 @@ export function CreateProfile() {
     alert('Please select at least one skill');
     return;
   }
-  // Optional field validations
-  if (discord && !discord.includes('#')) {
-    alert('Please enter a valid Discord username (e.g., username#1234)');
-    return;
-  }
+ 
   const newProfileId = addSoloProfile({
       name, bio, skills, interestedIn, discord, linkedinId
     });
     
     // ✅ Set this profile as your profile
-    setMyProfileId(newProfileId);
+    setMySoloId(newProfileId);
     
     alert('Profile created! ✅');
     navigate('/my-profile');
@@ -148,7 +151,7 @@ export function CreateProfile() {
                     if (skills.includes("Full Stack")) {
                       setSkills(skills.filter((s) => s !== "Full Stack"));
                     } else {
-                      setSkills([...skills, "Full stack"]);
+                      setSkills([...skills, "Full Stack"]);
                     }
                   }}
                 />
@@ -208,7 +211,7 @@ export function CreateProfile() {
                     if (skills.includes("Data Science")) {
                       setSkills(skills.filter((s) => s !== "Data Science"));
                     } else {
-                      setSkills([...skills, "FData Science"]);
+                      setSkills([...skills, "Data Science"]);
                     }
                   }} />
                 <span>Data Science</span>
