@@ -65,8 +65,6 @@ export function DisplayTeams() {
 
            <div className="profiles-grid">
 
-
-         
             {teams.map((user) => (
               <div className="profile-card" key={user.id}>
                 <div className="profile-header">

@@ -4,6 +4,7 @@ import { getTeamProfileById } from "../data/teamProfiles";
 import { Link } from "react-router-dom";
 import { useEffect,useState } from "react";
 import "./MyProfile.css";
+import "./HomePage.css"
 
 export function MyProfile() {
 
@@ -62,11 +63,12 @@ export function MyProfile() {
                   <h4>Contact</h4>
                   <p>💬 {soloProfile.discord}</p>
                 </div>
-              </div>
-
-              <Link to="/create-profile" className="btn-edit">
+                <Link to="/create-profile" className="btn-edit">
                 Edit Solo Profile
               </Link>
+              </div>
+
+              
             </div>
           ) : (
             <div className="empty-state">
@@ -118,11 +120,12 @@ export function MyProfile() {
                   <h4>Contact</h4>
                   <p>💬 {teamProfile.discord}</p>
                 </div>
+                <Link to="/create-team-profile" className="btn-edit">
+                Edit Team Profile
+              </Link>0.0
               </div>
 
-              <Link to="/create-team-profile" className="btn-edit">
-                Edit Team Profile
-              </Link>
+              
             </div>
           ) : (
             <div className="empty-state">
