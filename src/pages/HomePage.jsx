@@ -1,8 +1,9 @@
 import "./HomePage.css";
 import "../index.css";
+import { useState } from "react";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getAllSoloProfiles } from "../data/soloProfiles";
+import { getAllSoloProfiles,getAllUniqueSkills } from "../data/soloProfiles";
 import { getMySoloId } from "../data/myProfile";
 
 export function HomePage() {
@@ -10,6 +11,14 @@ export function HomePage() {
   const allUsers = getAllSoloProfiles();
   const mySoloId = getMySoloId();
   const otherUsers = allUsers.filter(user => user.id !== mySoloId);
+
+ const allSkills = getAllUniqueSkills();
+ const [selectedSkill, setSelectedSkill] = useState(null);
+
+ const filteredUsers = otherUsers.filter(user => 
+    !selectedSkill || user.skills.includes(selectedSkill)
+  );
+
   const navigate = useNavigate();
   
   return (
@@ -45,26 +54,36 @@ export function HomePage() {
 
         <div className="search-wrapper">
           <div className="filter-container">
-            <button className="filter-chip active">All Skills</button>
-            <button className="filter-chip">Frontend</button>
-            <button className="filter-chip">Backend</button>
-            <button className="filter-chip">Full Stack</button>
-            <button className="filter-chip">Design</button>
-            <button className="filter-chip">AI/ML</button>
-            <button className="filter-chip">DevOps</button>
-            <button className="filter-chip">Mobile</button>
-            <button className="filter-chip">Data Science</button>
+             <button 
+              className={`filter-chip ${!selectedSkill ? 'active' : ''}`}
+              onClick={() => setSelectedSkill(null)}
+            >
+              All Skills
+            </button>
+
+            {allSkills.map(skill => (
+              <button
+                key={skill}
+                className={`filter-chip ${selectedSkill === skill ? 'active' : ''}`}
+                onClick={() => setSelectedSkill(skill)}
+              >
+                {skill}
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="profiles-container">
-          <div className="results-info">Showing 7 of 7 members</div>
+          <div className="results-info">
+            Showing {filteredUsers.length} of {otherUsers.length} members
+
+          </div>
 
            <div className="profiles-grid">
 
 
          
-            {otherUsers.map((user) => (
+            {filteredUsers.map((user) => (
               <div className="profile-card" key={user.id}>
                 <div className="profile-header">
                   <div className="avatar">{user.name.charAt(0)}</div>

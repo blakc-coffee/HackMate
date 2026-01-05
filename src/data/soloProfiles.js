@@ -37,6 +37,10 @@ const defaultSoloProfiles = {
 export let soloProfiles = JSON.parse(
   localStorage.getItem('soloProfiles') || JSON.stringify(defaultSoloProfiles)
 );
+export function getAllUniqueSkills() {
+  const allSkills = Object.values(soloProfiles).flatMap(user => user.skills || []);
+  return [...new Set(allSkills)].sort(); // Unique + sorted
+}
 
 // Save new solo profile
 export function addSoloProfile(profile) {

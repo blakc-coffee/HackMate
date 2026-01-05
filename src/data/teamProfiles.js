@@ -33,6 +33,11 @@ const defaultTeamProfiles = {
   }
 };
 
+export function getAllUniqueSkills() {
+  const allSkills = Object.values(teamProfiles).flatMap(team => team.skills || []);
+  return [...new Set(allSkills)].sort(); // Unique + sorted
+}
+
 export let teamProfiles = JSON.parse(
   localStorage.getItem('teamProfiles') || JSON.stringify(defaultTeamProfiles)
 );

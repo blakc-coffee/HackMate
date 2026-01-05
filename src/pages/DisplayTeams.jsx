@@ -47,7 +47,7 @@ export function DisplayTeams() {
             </div>
 
         <div className="search-wrapper">
-          <div className="filter-container">
+          {/*<div className="filter-container">
             <button className="filter-chip active">All Skills</button>
             <button className="filter-chip">Frontend</button>
             <button className="filter-chip">Backend</button>
@@ -57,11 +57,11 @@ export function DisplayTeams() {
             <button className="filter-chip">DevOps</button>
             <button className="filter-chip">Mobile</button>
             <button className="filter-chip">Data Science</button>
-          </div>
+          </div>*/}
         </div>
 
         <div className="profiles-container">
-          <div className="results-info">Showing 7 of 7 members</div>
+          <div className="results-info"></div>
 
            <div className="profiles-grid">
 
