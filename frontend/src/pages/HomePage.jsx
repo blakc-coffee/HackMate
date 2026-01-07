@@ -1,21 +1,43 @@
 import "./HomePage.css";
 import "../index.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getAllSoloProfiles,getAllUniqueSkills } from "../data/soloProfiles";
+import { getAllSoloProfiles } from "../data/soloProfiles";
 import { getMySoloId } from "../data/myProfile";
 
 export function HomePage() {
 
-  const allUsers = getAllSoloProfiles();
+  const [allUsers, setAllUsers] = useState([]);
+  const [allSkills, setAllSkills] = useState([]);
+  const [selectedSkill, setSelectedSkill] = useState(null);
+
   const mySoloId = getMySoloId();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      try {
+        const users = await getAllSoloProfiles();
+        if (!isMounted) return;
+        setAllUsers(users || []);
+        const skills = [...new Set((users || []).flatMap(user => user.skills || []))].sort();
+        setAllSkills(skills);
+      } catch (error) {
+        console.error("Failed to load solo profiles", error);
+      }
+    }
+
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const otherUsers = allUsers.filter(user => user.id !== mySoloId);
 
- const allSkills = getAllUniqueSkills();
- const [selectedSkill, setSelectedSkill] = useState(null);
-
- const filteredUsers = otherUsers.filter(user => 
+  const filteredUsers = otherUsers.filter(user => 
     !selectedSkill || user.skills.includes(selectedSkill)
   );
 

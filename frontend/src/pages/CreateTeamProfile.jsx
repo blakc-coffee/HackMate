@@ -19,7 +19,10 @@ export function CreateTeamProfile() {
 
   const navigate = useNavigate();
 
-  const handleCreate = () => {
+  const handleCreate = async (event) => {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
     // ✅ Check if user already has a solo profile
     const existingTeamId = getMyTeamId();
     if (existingTeamId) {
@@ -39,7 +42,7 @@ export function CreateTeamProfile() {
       alert("Please select at least one skill");
       return;
     }
-    const newTeamId = addTeamProfile({
+    const newTeamId = await addTeamProfile({
       name,
       bio,
       skills,

@@ -1,79 +1,84 @@
 import { getMySoloId } from "./myProfile";
+import {
+  createSoloProfile as createSoloProfileInDb,
+  getSoloProfile as getSoloProfileFromDb,
+  getAllSoloProfilesFromDb,
+  updateSoloProfile as updateSoloProfileInDb,
+} from "./firebaseProfiles";
 
-const defaultSoloProfiles = {
-  "solo-1": {
-    id: "solo-1",
-    name: "Aditya Seetam",
-    age: 22,
+// Map Firestore solo profile to the shape used in the UI
+function mapSoloFromDb(doc) {
+  if (!doc) return null;
+  const contact = doc.contact || {};
+  return {
+    id: doc.id,
     type: "solo",
-    bio: "Jobless herbivore",
-    skills: ["AI/ML", "Data Science"],
-    interestedIn: "Jobs",
-    discord: "dark-1410",
-    linkedinId: "Aditya"
-  },
-  "solo-2": {
-    id: "solo-2",
-    name: "Nili Thayyil",
-    age: 23,
-    type: "solo",
-    bio: "I'm really tall",
-    skills: ["Python", "Mobile"],
-    interestedIn: "AI/ML",
-    discord: "yougurt",
-    linkedinId: "Nilli-Thayill"
-  },
-  "solo-3": {
-    id: "solo-3",
-    name: "Johana",
-    age: 23,
-    type: "solo",
-    bio: "ML engineer",
-    skills: ["Python", "Backend"],
-    interestedIn: "AI/ML",
-    discord: "sarah#5678",
-    linkedinId: "sarah-patel"
-  }
-};
-
-export let soloProfiles = JSON.parse(
-  localStorage.getItem('soloProfiles') || JSON.stringify(defaultSoloProfiles)
-);
-export function getAllUniqueSkills() {
-  const allSkills = Object.values(soloProfiles).flatMap(user => user.skills || []);
-  return [...new Set(allSkills)].sort(); // Unique + sorted
+    name: doc.name,
+    bio: doc.bio,
+    skills: doc.skills || [],
+    interestedIn: doc.interests || "",
+    discord: contact.discord || doc.discord || "",
+    linkedinId: contact.linkedin || doc.linkedinId || "",
+  };
 }
 
-// Save new solo profile
-export function addSoloProfile(profile) {
+export async function getAllUniqueSkills() {
+  const all = await getAllSoloProfiles();
+  const allSkills = all.flatMap(user => user.skills || []);
+  return [...new Set(allSkills)].sort();
+}
+
+// Save new solo profile in Firestore
+export async function addSoloProfile(profile) {
   const id = `solo-${Date.now()}`;
-  soloProfiles[id] = { id, type: 'solo', ...profile };
-  localStorage.setItem('soloProfiles', JSON.stringify(soloProfiles));
+
+  await createSoloProfileInDb(id, {
+    name: profile.name,
+    bio: profile.bio,
+    skills: profile.skills || [],
+    interests: profile.interestedIn || "",
+    contact: {
+      discord: profile.discord || "",
+      linkedin: profile.linkedinId || "",
+    },
+  });
+
   return id;
 }
 
-// Get all as array
-export function getAllSoloProfiles() {
-  return Object.values(soloProfiles);
+// Get all as array from Firestore
+export async function getAllSoloProfiles() {
+  const docs = await getAllSoloProfilesFromDb();
+  return docs.map(mapSoloFromDb);
 }
 
-// Get single by ID
-export function getSoloProfileById(id) {
-  return soloProfiles[id];
+// Get single by ID from Firestore
+export async function getSoloProfileById(id) {
+  const doc = await getSoloProfileFromDb(id);
+  return mapSoloFromDb(doc);
 }
 
-export function updateMySoloProfile(updatedProfile) {
-  const mySoloId = getMySoloId(); // ✅ Get your ID
-  soloProfiles[mySoloId] = {
-    ...soloProfiles[mySoloId],
-    ...updatedProfile,
-    id: mySoloId
-  };
-  localStorage.setItem('soloProfiles', JSON.stringify(soloProfiles));
-  return soloProfiles[mySoloId];
-}
-
-export function getMyProfile() {
+export async function updateMySoloProfile(updatedProfile) {
   const mySoloId = getMySoloId();
-  return soloProfiles[mySoloId];
+  if (!mySoloId) return null;
+
+  await updateSoloProfileInDb(mySoloId, {
+    name: updatedProfile.name,
+    bio: updatedProfile.bio,
+    skills: updatedProfile.skills || [],
+    interests: updatedProfile.interestedIn || "",
+    contact: {
+      discord: updatedProfile.discord || "",
+      linkedin: updatedProfile.linkedinId || "",
+    },
+  });
+
+  const doc = await getSoloProfileFromDb(mySoloId);
+  return mapSoloFromDb(doc);
+}
+
+export async function getMyProfile() {
+  const mySoloId = getMySoloId();
+  if (!mySoloId) return null;
+  return getSoloProfileById(mySoloId);
 }

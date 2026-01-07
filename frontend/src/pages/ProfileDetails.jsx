@@ -1,16 +1,38 @@
 import "./ProfileDetails.css"
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getSoloProfileById } from "../data/soloProfiles";
 import { getTeamProfileById } from "../data/teamProfiles";
 
 export function ProfileDetails(){
   const { id } = useParams();
-  
-  const soloUser = getSoloProfileById(id);
-  const teamUser = getTeamProfileById(id);
-  
-  const profile = soloUser || teamUser;
-  
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      const soloUser = await getSoloProfileById(id);
+      const teamUser = soloUser ? null : await getTeamProfileById(id);
+      if (!isMounted) return;
+      setProfile(soloUser || teamUser || null);
+    }
+
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (!profile) {
+    return (
+      <>
+        <div className="profile-detail-container">
+          <p>Loading profile...</p>
+        </div>
+      </>
+    );
+  }
 
   return(
     <>

@@ -1,77 +1,99 @@
 import { getMyTeamId } from "./myProfile";
-const defaultTeamProfiles = {
-  "team-1": {
-    id: "team-1",
-    name: "CodeCrushers",
-    type: "team",
-    bio: "Building scalable APIs",
-    skills: ["Node.js", "Docker", "AWS"],
-    interestedIn: "Backend, DevOps",
-    
- 
-    member1Name: "John Smith",
-    member2Name: "Emma Johnson",
-    member3Name: "Mike Chen",
-    
-    discord: "codecrushers#3456",
-    linkedinId: "codecrushers-team"
-  },
-  "team-2": {
-    id: "team-2",
-    name: "PixelPioneers",
-    type: "team",
-    bio: "Design-focused fintech",
-    skills: ["Figma", "React", "JavaScript"],
-    interestedIn: "Frontend, Design",
-    
-    member1Name: "Lisa Wong",
-    member2Name: "David Park",
-    member3Name: "Sofia Garcia",
-    
-    discord: "pixelpioneers#7890",
-    linkedinId: "pixelpioneers"
-  }
-};
+import {
+  createTeam as createTeamInDb,
+  getTeam as getTeamFromDb,
+  getAllTeamsFromDb,
+  updateTeam as updateTeamInDb,
+} from "./firebaseProfiles";
 
-export function getAllUniqueSkills() {
-  const allSkills = Object.values(teamProfiles).flatMap(team => team.skills || []);
-  return [...new Set(allSkills)].sort(); // Unique + sorted
+// Map Firestore team profile to the shape used in the UI
+function mapTeamFromDb(doc) {
+  if (!doc) return null;
+  const contact = doc.contact || {};
+  const members = Array.isArray(doc.members) ? doc.members : [];
+
+  return {
+    id: doc.id,
+    type: "team",
+    name: doc.name,
+    bio: doc.bio,
+    skills: doc.tags || doc.skills || [],
+    interestedIn: doc.interests || "",
+    member1Name: members[0]?.name || "",
+    member2Name: members[1]?.name || "",
+    member3Name: members[2]?.name || "",
+    discord: contact.discord || doc.discord || "",
+    linkedinId: contact.linkedin || doc.linkedinId || "",
+  };
 }
 
-export let teamProfiles = JSON.parse(
-  localStorage.getItem('teamProfiles') || JSON.stringify(defaultTeamProfiles)
-);
+export async function getAllUniqueSkills() {
+  const all = await getAllTeamProfiles();
+  const allSkills = all.flatMap(team => team.skills || []);
+  return [...new Set(allSkills)].sort();
+}
 
-// Save new team profile
-export function addTeamProfile(team) {
+// Save new team profile in Firestore
+export async function addTeamProfile(team) {
   const id = `team-${Date.now()}`;
-  teamProfiles[id] = { id, type: 'team', ...team };
-  localStorage.setItem('teamProfiles', JSON.stringify(teamProfiles));
+
+  await createTeamInDb(id, {
+    name: team.name,
+    bio: team.bio,
+    tags: team.skills || [],
+    interests: team.interestedIn || "",
+    contact: {
+      discord: team.discord || "",
+      linkedin: team.linkedinId || "",
+    },
+    members: [
+      { uid: `${id}-m1`, name: team.member1Name || "", role: "Member" },
+      { uid: `${id}-m2`, name: team.member2Name || "", role: "Member" },
+      { uid: `${id}-m3`, name: team.member3Name || "", role: "Member" },
+    ],
+  });
+
   return id;
 }
 
-// Get all as array
-export function getAllTeamProfiles() {
-  return Object.values(teamProfiles);
+// Get all as array from Firestore
+export async function getAllTeamProfiles() {
+  const docs = await getAllTeamsFromDb();
+  return docs.map(mapTeamFromDb);
 }
 
-// Get single by ID
-export function getTeamProfileById(id) {
-  return teamProfiles[id];
+// Get single by ID from Firestore
+export async function getTeamProfileById(id) {
+  const doc = await getTeamFromDb(id);
+  return mapTeamFromDb(doc);
 }
 
-export function updateMyTeamProfile(updatedProfile) {
-  const myTeamId = getMyTeamId(); // ✅ Get your ID
-  teamProfiles[myTeamId] = {
-    ...teamProfiles[myTeamId],
-    ...updatedProfile,
-    id: myTeamId
-  };
-  localStorage.setItem('teamProfiles', JSON.stringify(teamProfiles));
-  return teamProfiles[myTeamId];
-}
-
-export function getMyTeamProfile() {
+export async function updateMyTeamProfile(updatedProfile) {
   const myTeamId = getMyTeamId();
-  return teamProfiles[myTeamId];
+  if (!myTeamId) return null;
+
+  await updateTeamInDb(myTeamId, {
+    name: updatedProfile.name,
+    bio: updatedProfile.bio,
+    tags: updatedProfile.skills || [],
+    interests: updatedProfile.interestedIn || "",
+    contact: {
+      discord: updatedProfile.discord || "",
+      linkedin: updatedProfile.linkedinId || "",
+    },
+    members: [
+      { uid: `${myTeamId}-m1`, name: updatedProfile.member1Name || "", role: "Member" },
+      { uid: `${myTeamId}-m2`, name: updatedProfile.member2Name || "", role: "Member" },
+      { uid: `${myTeamId}-m3`, name: updatedProfile.member3Name || "", role: "Member" },
+    ],
+  });
+
+  const doc = await getTeamFromDb(myTeamId);
+  return mapTeamFromDb(doc);
+}
+
+export async function getMyTeamProfile() {
+  const myTeamId = getMyTeamId();
+  if (!myTeamId) return null;
+  return getTeamProfileById(myTeamId);
 }

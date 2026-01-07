@@ -17,17 +17,29 @@ export function EditSoloProfile() {
 
   
   useEffect(() => {
-    const myProfile = getMyProfile();
-    
+    let isMounted = true;
 
-    // ✅ Pre-fill with your data
-    setName(myProfile.name || "");
-    setBio(myProfile.bio || "");
-    setSkills(myProfile.skills || []);
-    setInterestedIn(myProfile.interestedIn || "");
-    setDiscord(myProfile.discord || "");
-    setLinkedinId(myProfile.linkedinId || "");
-    setLoading(false);
+    async function load() {
+      const myProfile = await getMyProfile();
+      if (!isMounted || !myProfile) {
+        setLoading(false);
+        return;
+      }
+
+      // ✅ Pre-fill with your data
+      setName(myProfile.name || "");
+      setBio(myProfile.bio || "");
+      setSkills(myProfile.skills || []);
+      setInterestedIn(myProfile.interestedIn || "");
+      setDiscord(myProfile.discord || "");
+      setLinkedinId(myProfile.linkedinId || "");
+      setLoading(false);
+    }
+
+    load();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // ✅ Handle skill selection
@@ -42,7 +54,7 @@ export function EditSoloProfile() {
   };
 
   // ✅ Handle update
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!name?.trim()) {
       alert("Please enter your name");
       return;
@@ -57,7 +69,7 @@ export function EditSoloProfile() {
     }
 
     // ✅ Update YOUR profile
-    updateMySoloProfile({
+    await updateMySoloProfile({
       name,
       bio,
       skills,

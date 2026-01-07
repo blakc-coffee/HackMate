@@ -1,5 +1,6 @@
 import "./HomePage.css";
 import "../index.css";
+import { useEffect, useState } from "react";
 import { Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getAllTeamProfiles } from "../data/teamProfiles";
@@ -7,13 +8,28 @@ import { getMyTeamId } from "../data/myProfile";
 
 export function DisplayTeams() {
   const navigate = useNavigate();
-    const allTeams = getAllTeamProfiles();
-  const myTeamId = getMyTeamId(); // ✅ Get your team profile ID
-  
+  const [teams, setTeams] = useState([]);
 
-  const teams = allTeams.filter(team => team.id !== myTeamId);
-  
-  
+  useEffect(() => {
+    let isMounted = true;
+
+    async function load() {
+      try {
+        const allTeams = await getAllTeamProfiles();
+        if (!isMounted) return;
+        const myTeamId = getMyTeamId();
+        const filtered = (allTeams || []).filter(team => team.id !== myTeamId);
+        setTeams(filtered);
+      } catch (error) {
+        console.error("Failed to load team profiles", error);
+      }
+    }
+
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <>

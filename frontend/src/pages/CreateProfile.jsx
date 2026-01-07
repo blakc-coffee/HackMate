@@ -15,7 +15,10 @@ export function CreateProfile() {
   const [linkedinId, setLinkedinId] = useState("");
   const navigate = useNavigate();
 
-  const handleCreate = () => {
+  const handleCreate = async (event) => {
+    if (event && event.preventDefault) {
+      event.preventDefault();
+    }
 
     // ✅ Check if user already has a solo profile
     const existingSoloId = getMySoloId();
@@ -37,7 +40,7 @@ export function CreateProfile() {
     return;
   }
  
-  const newProfileId = addSoloProfile({
+  const newProfileId = await addSoloProfile({
       name, bio, skills, interestedIn, discord, linkedinId
     });
     

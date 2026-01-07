@@ -15,14 +15,18 @@ export function MyProfile() {
 
 
   useEffect(() => {
-    const mySoloId = getMySoloId();
-    const myTeamId = getMyTeamId();
+    async function load() {
+      const mySoloId = getMySoloId();
+      const myTeamId = getMyTeamId();
 
-    const solo = mySoloId ? getSoloProfileById(mySoloId) : null;
-    const team = myTeamId ? getTeamProfileById(myTeamId) : null;
+      const solo = mySoloId ? await getSoloProfileById(mySoloId) : null;
+      const team = myTeamId ? await getTeamProfileById(myTeamId) : null;
 
-    setSoloProfile(solo);
-    setTeamProfile(team);
+      setSoloProfile(solo);
+      setTeamProfile(team);
+    }
+
+    load();
   }, []);
 
   return (

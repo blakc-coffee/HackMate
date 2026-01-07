@@ -20,24 +20,35 @@ export function EditTeamProfile() {
 
   // ✅ Load YOUR team profile
   useEffect(() => {
-    const myTeam = getMyTeamProfile();
-    if (!myTeam) {
-      alert("❌ You haven't created a team yet!");
-      navigate("/create-team-profile");
-      return;
+    let isMounted = true;
+
+    async function load() {
+      const myTeam = await getMyTeamProfile();
+      if (!isMounted) return;
+
+      if (!myTeam) {
+        alert("❌ You haven't created a team yet!");
+        navigate("/create-team-profile");
+        return;
+      }
+
+      // ✅ Pre-fill with your data
+      setName(myTeam.name || "");
+      setBio(myTeam.bio || "");
+      setSkills(myTeam.skills || []);
+      setInterestedIn(myTeam.interestedIn || "");
+      setDiscord(myTeam.discord || "");
+      setLinkedinId(myTeam.linkedinId || "");
+      setMember1Name(myTeam.member1Name || "");
+      setMember2Name(myTeam.member2Name || "");
+      setMember3Name(myTeam.member3Name || "");
+      setLoading(false);
     }
 
-    // ✅ Pre-fill with your data
-    setName(myTeam.name || "");
-    setBio(myTeam.bio || "");
-    setSkills(myTeam.skills || []);
-    setInterestedIn(myTeam.interestedIn || "");
-    setDiscord(myTeam.discord || "");
-    setLinkedinId(myTeam.linkedinId || "");
-    setMember1Name(myTeam.member1Name || "");
-    setMember2Name(myTeam.member2Name || "");
-    setMember3Name(myTeam.member3Name || "");
-    setLoading(false);
+    load();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // ✅ Handle skills
@@ -52,7 +63,7 @@ export function EditTeamProfile() {
   };
 
   // ✅ Handle update
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!name?.trim()) {
       alert("Please enter team name");
       return;
@@ -71,7 +82,7 @@ export function EditTeamProfile() {
     }
 
     // ✅ Update YOUR team profile
-    updateMyTeamProfile({
+    await updateMyTeamProfile({
       name,
       bio,
       skills,
